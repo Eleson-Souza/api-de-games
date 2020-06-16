@@ -44,9 +44,34 @@ app.get('/game/:id', authWithToken.authToken, (req, res) => {
         res.sendStatus(400);
     } else {
         var id = parseInt(req.params.id);
+
+        // lista de links do HATEOAS
+        var HATEOAS = [
+            {
+                href: `http://localhost:45679/game/${id}`,
+                method: "DELETE",
+                rel: "delete_game"
+            },
+            {
+                href: `http://localhost:45679/game/${id}`,
+                method: "PUT",
+                rel: "edit_game"
+            },
+            {
+                href: `http://localhost:45679/game/${id}`,
+                method: "GET",
+                rel: "get_game"
+            },
+            {
+                href: `http://localhost:45679/games`,
+                method: "GET",
+                rel: "get_all_games"
+            },
+        ];
+
         Games.findByPk(id).then((game) => {
             if(game != undefined) {
-                res.json(game);
+                res.json({game, _links: HATEOAS});
             } else {
                 res.sendStatus(404);
             }
